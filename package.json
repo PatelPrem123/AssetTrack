@@ -1,0 +1,29 @@
+{
+  "name": "assettrack-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AssetTrack - Enterprise IT Asset & Hardware Inventory Management System",
+  "scripts": {
+    "start:server": "npm --prefix server start",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build:client": "npm --prefix client run build",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test",
+    "test": "npm --prefix server test"
+  },
+  "keywords": [
+    "assettrack",
+    "itam",
+    "hardware-inventory",
+    "qr-code",
+    "chain-of-custody",
+    "component-evolution",
+    "stock-ledger",
+    "recharts",
+    "exceljs",
+    "pdfkit"
+  ],
+  "author": "AssetTrack Core Engineering Team",
+  "license": "MIT"
+}
