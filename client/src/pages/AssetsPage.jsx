@@ -250,9 +250,9 @@ export function AssetsPage() {
                     <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
                       {asset.categoryId?.name || 'Hardware'}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                        className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap border shrink-0 ${
                           STATUS_BADGES[asset.status] || 'bg-slate-100 text-slate-700'
                         }`}
                       >

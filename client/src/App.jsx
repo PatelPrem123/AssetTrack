@@ -9,6 +9,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { AssetsPage } from './pages/AssetsPage';
 import { AssetRegisterPage } from './pages/AssetRegisterPage';
+import { ScannerPage } from './pages/ScannerPage';
 import { AssignmentsPage } from './pages/AssignmentsPage';
 import { MaintenancePage } from './pages/MaintenancePage';
 import { InventoryPage } from './pages/InventoryPage';
@@ -55,7 +56,7 @@ export function App() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/assets" element={<AssetsPage />} />
                 <Route path="/assets/new" element={<AssetRegisterPage />} />
-                <Route path="/scanner" element={<AssetsPage />} />
+                <Route path="/scanner" element={<ScannerPage />} />
                 <Route path="/assignments" element={<AssignmentsPage />} />
                 <Route path="/maintenance" element={<MaintenancePage />} />
                 <Route path="/inventory" element={<InventoryPage />} />

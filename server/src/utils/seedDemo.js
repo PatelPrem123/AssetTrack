@@ -8,6 +8,7 @@ import { Location } from '../models/Location.js';
 import { Asset } from '../models/Asset.js';
 import { AssetAssignment } from '../models/AssetAssignment.js';
 import { StockItem } from '../models/StockItem.js';
+import { StockMovement } from '../models/StockMovement.js';
 import { MaintenanceRecord } from '../models/MaintenanceRecord.js';
 import { TaxonomyService } from '../services/taxonomy/taxonomyService.js';
 import { generateUniqueAssetTag, generateOpaqueQRToken } from '../services/asset/tagGenerator.js';
@@ -220,7 +221,7 @@ export async function seedDemoDatabase() {
   });
 
   // 8. Create Spare Parts Stock
-  await StockItem.create({
+  const stock1 = await StockItem.create({
     organizationId: org._id,
     itemCode: 'RAM-DDR5-16G-5600',
     name: 'Crucial 16GB DDR5 5600MT/s SODIMM',
@@ -232,7 +233,7 @@ export async function seedDemoDatabase() {
     location: 'Bin A-1',
   });
 
-  await StockItem.create({
+  const stock2 = await StockItem.create({
     organizationId: org._id,
     itemCode: 'SSD-NVME-1TB-990P',
     name: 'Samsung 990 PRO 1TB PCIe 4.0 NVMe',
@@ -242,6 +243,31 @@ export async function seedDemoDatabase() {
     minStockLevel: 5,
     unitCostMinor: 1100000,
     location: 'Bin B-4',
+  });
+
+  // 9. Create Sample Stock Movement Ledger Entries (DEC-006)
+  await StockMovement.create({
+    organizationId: org._id,
+    stockItemId: stock1._id,
+    movementType: 'IN',
+    quantity: 8,
+    previousQuantity: 0,
+    newQuantity: 8,
+    referenceType: 'Purchase',
+    performedBy: admin._id,
+    notes: 'Initial procurement batch delivery PO-2026-088',
+  });
+
+  await StockMovement.create({
+    organizationId: org._id,
+    stockItemId: stock2._id,
+    movementType: 'OUT',
+    quantity: 3,
+    previousQuantity: 5,
+    newQuantity: 2,
+    referenceType: 'Maintenance',
+    performedBy: tech._id,
+    notes: 'Dispatched for CAD Workstation storage upgrade',
   });
 
   console.log('✅ Demo database seeded successfully for Test IT Corp (TESTIT)');
