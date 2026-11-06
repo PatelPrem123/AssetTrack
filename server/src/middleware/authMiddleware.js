@@ -63,6 +63,50 @@ export async function protect(req, res, next) {
   }
 }
 
+/**
+ * Optional authentication middleware:
+ * If token is present and valid, attaches req.user.
+ * If token is missing or invalid, proceeds without error as guest.
+ */
+export async function optionalProtect(req, res, next) {
+  try {
+    let token = null;
+    if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (!token) {
+      return next();
+    }
+
+    const decoded = jwt.verify(token, env.JWT_SECRET);
+    const user = await User.findById(decoded.id).lean();
+    if (user && user.isActive) {
+      const org = await Organization.findById(user.organizationId).lean();
+      if (org && org.isActive) {
+        req.user = {
+          _id: user._id,
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          employeeId: user.employeeId,
+          departmentId: user.departmentId,
+          organizationId: user.organizationId,
+          organizationCode: org.code,
+          organizationName: org.name,
+          settings: org.settings,
+        };
+      }
+    }
+    next();
+  } catch {
+    next();
+  }
+}
+
 export function authorize(...roles) {
   return (req, res, next) => {
     if (!req.user) {

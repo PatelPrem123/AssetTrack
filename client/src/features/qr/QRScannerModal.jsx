@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { X, QrCode, Search, CheckCircle2, AlertCircle, ArrowRight, Laptop, User, MapPin } from 'lucide-react';
 import { api } from '../../services/api';
@@ -22,33 +23,60 @@ export function QRScannerModal({ isOpen, onClose, onSelectAsset }) {
 
     // Initialize scanner with slight delay to ensure DOM is ready
     let observer = null;
+    let pollInterval = null;
+
+    const humanizeScannerErrors = () => {
+      const container = document.getElementById('qr-reader-container');
+      if (!container) return;
+
+      const headerMsg = document.getElementById('qr-reader-container__header_message');
+      if (headerMsg && headerMsg.innerText) {
+        const text = headerMsg.innerText;
+        if (
+          text.includes('NotFoundException') ||
+          text.includes('No MultiFormat Readers') ||
+          text.includes('No barcode or QR code') ||
+          text.includes('error decoding')
+        ) {
+          headerMsg.innerText =
+            'No valid QR code detected in the selected image. Please upload a clear photo of an AssetTrack QR tag, or enter the tag manually below.';
+          headerMsg.style.fontSize = '12px';
+          headerMsg.style.lineHeight = '1.4';
+          headerMsg.style.padding = '10px 14px';
+          headerMsg.style.borderRadius = '10px';
+          headerMsg.style.border = '1px solid #fed7aa';
+          headerMsg.style.background = '#fffbeb';
+          headerMsg.style.color = '#b45309';
+          headerMsg.style.fontWeight = '500';
+          headerMsg.style.textAlign = 'center';
+          headerMsg.style.margin = '8px 0';
+        }
+      }
+
+      // Also sanitize any span or div inside the scan region
+      const allSpans = container.querySelectorAll('span, div');
+      allSpans.forEach((el) => {
+        if (el.children.length === 0 && el.innerText) {
+          const t = el.innerText;
+          if (t.includes('NotFoundException') || t.includes('No MultiFormat Readers')) {
+            el.innerText =
+              'No valid QR code detected in the selected image. Please upload a clear photo of an AssetTrack QR tag, or enter the tag manually below.';
+            el.style.fontSize = '12px';
+            el.style.color = '#b45309';
+          }
+        }
+      });
+    };
+
     const timer = setTimeout(() => {
       try {
         const container = document.getElementById('qr-reader-container');
         if (container) {
           observer = new MutationObserver(() => {
-            const headerMsg = document.getElementById('qr-reader-container__header_message');
-            if (headerMsg && headerMsg.innerText) {
-              const text = headerMsg.innerText;
-              if (
-                text.includes('NotFoundException') ||
-                text.includes('No MultiFormat Readers') ||
-                text.includes('No barcode or QR code')
-              ) {
-                headerMsg.innerText =
-                  'No valid QR code detected in the selected image. Please upload an image with a clear Asset QR code, or enter the tag manually below.';
-                headerMsg.style.fontSize = '12px';
-                headerMsg.style.padding = '8px 12px';
-                headerMsg.style.borderRadius = '8px';
-                headerMsg.style.border = '1px solid #fecdd3';
-                headerMsg.style.background = '#fff1f2';
-                headerMsg.style.color = '#e11d48';
-                headerMsg.style.textAlign = 'center';
-                headerMsg.style.margin = '8px 0';
-              }
-            }
+            humanizeScannerErrors();
           });
           observer.observe(container, { childList: true, subtree: true, characterData: true });
+          pollInterval = setInterval(humanizeScannerErrors, 250);
         }
 
         const scanner = new Html5QrcodeScanner(
@@ -85,6 +113,7 @@ export function QRScannerModal({ isOpen, onClose, onSelectAsset }) {
 
     return () => {
       clearTimeout(timer);
+      if (pollInterval) clearInterval(pollInterval);
       if (observer) {
         observer.disconnect();
       }
@@ -120,8 +149,8 @@ export function QRScannerModal({ isOpen, onClose, onSelectAsset }) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
         <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
@@ -249,6 +278,7 @@ export function QRScannerModal({ isOpen, onClose, onSelectAsset }) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

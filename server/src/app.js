@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -6,6 +8,10 @@ import rateLimit from 'express-rate-limit';
 import { env } from './config/env.js';
 import { notFound } from './middleware/notFound.js';
 import { errorHandler } from './middleware/errorHandler.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientPublicDir = path.resolve(__dirname, '../../client/public');
 
 import authRoutes from './routes/authRoutes.js';
 import taxonomyRoutes from './routes/taxonomyRoutes.js';
@@ -68,6 +74,19 @@ app.get('/api/v1/health', (req, res) => {
     uptimeSeconds: Math.floor(process.uptime()),
     environment: env.NODE_ENV,
     memoryUsageMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+  });
+});
+
+// SEO Direct Handlers: robots.txt and sitemap.xml
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(path.join(clientPublicDir, 'robots.txt'), (err) => {
+    if (err) res.type('text/plain').send("User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://assettrack.internal/sitemap.xml\n");
+  });
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(clientPublicDir, 'sitemap.xml'), (err) => {
+    if (err) res.status(404).send('Sitemap not found');
   });
 });
 

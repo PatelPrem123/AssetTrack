@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Laptop, QrCode, Cpu, ShieldCheck, ArrowRight, RefreshCw, Layers } from 'lucide-react';
+import { Laptop, QrCode, Cpu, ShieldCheck, ArrowRight, RefreshCw, Layers, ShoppingBag, Boxes, CheckCircle2 } from 'lucide-react';
 import { api } from '../services/api';
 import { Link } from 'react-router-dom';
+import { SEO } from '../components/common/SEO';
 
 export function LandingPage() {
   const [health, setHealth] = useState(null);
@@ -23,17 +24,38 @@ export function LandingPage() {
     fetchHealth();
   }, []);
 
+  const landingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'AssetTrack Enterprise ITAM',
+    url: 'https://assettrack.enterprise/',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://assettrack.enterprise/catalog?search={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+      {/* Primary Dynamic SEO */}
+      <SEO
+        title="AssetTrack | Enterprise IT Asset & Hardware Inventory Platform"
+        description="Enterprise ITAM system with granular hardware specifications modeling, opaque QR-code labels, chain of custody tracking, warranty monitoring, and spare parts catalog."
+        keywords="IT asset management, enterprise hardware inventory, DDR5 RAM SODIMM, Samsung 990 PRO NVMe SSD, Dell Latitude 7440, HP Z4 workstation, QR code asset labels"
+        canonical="https://assettrack.enterprise/"
+        schema={landingSchema}
+      />
+
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 p-8 text-white shadow-xl">
-        <div className="relative z-10 max-w-2xl space-y-4">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 p-8 sm:p-10 text-white shadow-xl">
+        <div className="relative z-10 max-w-3xl space-y-4">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-semibold backdrop-blur-md border border-brand-400/20">
             <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-            <span>Phase 1 Architecture Initialized</span>
+            <span>Enterprise ITAM & Hardware Store Architecture</span>
           </div>
           <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
-            Enterprise IT Asset & Hardware Inventory Platform
+            Enterprise IT Asset, Hardware Inventory & Spare Parts Platform
           </h1>
           <p className="text-slate-300 text-sm lg:text-base leading-relaxed">
             AssetTrack delivers granular hardware modeling (CPU, multi-module DDR4/5, NVMe/SATA drives),
@@ -41,15 +63,22 @@ export function LandingPage() {
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <Link
+              to="/catalog"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-sm transition-colors shadow-md shadow-sky-500/20"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span>Browse Hardware Store</span>
+            </Link>
+            <Link
               to="/assets"
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-white text-brand-900 font-semibold text-sm hover:bg-slate-100 transition-colors shadow-sm"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-white text-brand-900 font-semibold text-sm hover:bg-slate-100 transition-colors shadow-sm"
             >
               <span>Explore Inventory</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/scanner"
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-brand-700/60 hover:bg-brand-700 text-white font-medium text-sm border border-brand-500/30 transition-colors"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-700/60 hover:bg-brand-700 text-white font-medium text-sm border border-brand-500/30 transition-colors"
             >
               <QrCode className="h-4 w-4" />
               <span>QR Mobile Scanner</span>
@@ -173,6 +202,49 @@ export function LandingPage() {
           </p>
         </div>
       </div>
+
+      {/* Public E-Commerce Hardware Showcase Section (SEO & Storefront Integration) */}
+      <section className="mt-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 text-white shadow-xl relative overflow-hidden">
+        <div className="relative z-10 max-w-4xl space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-semibold border border-sky-400/30">
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span>Public Hardware & Spare Parts Catalog</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Procure Enterprise Laptops, Workstations & Upgrade Modules
+          </h2>
+          <p className="text-sm text-slate-300 leading-relaxed max-w-2xl">
+            Browse certified OEM hardware models with pre-configured structured specifications, warranty coverage, and instant procurement requisition.
+          </p>
+          <div className="pt-2 flex flex-wrap gap-3">
+            <Link
+              to="/catalog"
+              className="px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-900 font-bold text-xs rounded-xl transition shadow-lg flex items-center gap-2"
+            >
+              <span>Explore Storefront</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/catalog?category=laptops"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-xl transition border border-white/10"
+            >
+              Enterprise Laptops
+            </Link>
+            <Link
+              to="/catalog?category=workstations"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-xl transition border border-white/10"
+            >
+              CAD Workstations
+            </Link>
+            <Link
+              to="/catalog?category=networking"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-xl transition border border-white/10"
+            >
+              Managed Switches
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

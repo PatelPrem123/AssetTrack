@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useThemeStore } from '../../store/themeStore';
 import { useAuthStore } from '../../store/authStore';
-import { Sun, Moon, Laptop, Bell, LogOut, Shield } from 'lucide-react';
+import { Sun, Moon, Laptop, Bell, LogOut, Shield, Boxes } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { NotificationDrawer } from './NotificationDrawer';
 import { useQuery } from '@tanstack/react-query';
@@ -57,6 +57,15 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Public Hardware Storefront Link */}
+          <Link
+            to="/catalog"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 dark:hover:bg-sky-900/50 rounded-lg transition border border-sky-200/60 dark:border-sky-800/60"
+          >
+            <Boxes className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Hardware Store</span>
+          </Link>
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}

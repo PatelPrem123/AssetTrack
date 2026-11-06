@@ -1,0 +1,26 @@
+# AssetTrack Enterprise Robots Directive
+# https://github.com/PatelPrem123/AssetTrack
+
+User-agent: *
+Allow: /
+Allow: /catalog
+Allow: /catalog/*
+Allow: /scanner
+Allow: /login
+Allow: /register
+
+# Disallow Private Internal Tenant ITAM Endpoints & API Gateway
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /organization
+Disallow: /organization/*
+Disallow: /reports
+Disallow: /reports/*
+Disallow: /assignments
+Disallow: /assignments/*
+Disallow: /maintenance
+Disallow: /maintenance/*
+
+# XML Sitemap Location
+Sitemap: https://assettrack.enterprise/sitemap.xml

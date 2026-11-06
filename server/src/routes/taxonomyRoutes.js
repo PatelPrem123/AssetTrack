@@ -7,7 +7,7 @@ import {
   getLocations,
   createLocation,
 } from '../controllers/taxonomyController.js';
-import { protect, authorize, validate } from '../middleware/authMiddleware.js';
+import { protect, optionalProtect, authorize, validate } from '../middleware/authMiddleware.js';
 import {
   categorySchema,
   departmentSchema,
@@ -17,8 +17,8 @@ import { USER_ROLES } from '../config/constants.js';
 
 const router = express.Router();
 
-// Categories
-router.get('/categories', protect, getCategories);
+// Categories: public/optional read so registration forms are always populated
+router.get('/categories', optionalProtect, getCategories);
 router.post(
   '/categories',
   protect,
@@ -27,8 +27,8 @@ router.post(
   createCategory
 );
 
-// Departments
-router.get('/departments', protect, getDepartments);
+// Departments: public/optional read so dropdowns have fallback options
+router.get('/departments', optionalProtect, getDepartments);
 router.post(
   '/departments',
   protect,
@@ -37,8 +37,8 @@ router.post(
   createDepartment
 );
 
-// Locations
-router.get('/locations', protect, getLocations);
+// Locations: public/optional read so dropdowns have fallback options
+router.get('/locations', optionalProtect, getLocations);
 router.post(
   '/locations',
   protect,

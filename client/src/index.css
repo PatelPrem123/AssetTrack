@@ -30,3 +30,43 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-400 dark:bg-slate-600;
 }
+
+/* Html5Qrcode Scanner Theme & Error Styling */
+#qr-reader-container,
+#qr-page-scanner-container {
+  border: none !important;
+}
+
+#qr-reader-container__header_message,
+#qr-page-scanner-container__header_message {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid #fed7aa !important;
+  background-color: #fffbeb !important;
+  color: #b45309 !important;
+  font-weight: 500 !important;
+  font-family: inherit !important;
+  text-align: center !important;
+  margin: 10px 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+#qr-reader-container select,
+#qr-page-scanner-container select {
+  font-size: 12px !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  margin-bottom: 8px !important;
+}
+
+#qr-reader-container button,
+#qr-page-scanner-container button {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 6px 14px !important;
+  cursor: pointer !important;
+}

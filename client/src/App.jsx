@@ -15,6 +15,7 @@ import { MaintenancePage } from './pages/MaintenancePage';
 import { InventoryPage } from './pages/InventoryPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { OrganizationPage } from './pages/OrganizationPage';
+import { CatalogPage } from './pages/CatalogPage';
 import { useThemeStore } from './store/themeStore';
 import { useAuthStore } from './store/authStore';
 
@@ -53,6 +54,7 @@ export function App() {
                 />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/catalog" element={<CatalogPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/assets" element={<AssetsPage />} />
                 <Route path="/assets/new" element={<AssetRegisterPage />} />

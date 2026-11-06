@@ -2,12 +2,73 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AssetTrack - Enterprise IT Asset & Inventory Management</title>
+
+    <!-- Primary SEO Meta Tags -->
+    <title>AssetTrack | Enterprise IT Asset & Hardware Inventory Platform</title>
+    <meta name="title" content="AssetTrack | Enterprise IT Asset & Hardware Inventory Platform" />
+    <meta name="description" content="AssetTrack delivers granular hardware specifications modeling, opaque QR-code labels, chain of custody tracking, warranty monitoring, and an auditable spare parts stock ledger." />
+    <meta name="keywords" content="IT asset management, ITAM, enterprise hardware inventory, QR code asset labels, computer specs tracking, DDR5 RAM modules, NVMe SSDs, refurbished laptops, IT equipment procurement, spare parts ledger" />
+    <meta name="author" content="AssetTrack Global Systems" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#0284c7" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="AssetTrack" />
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://assettrack.enterprise/" />
+    <meta property="og:site_name" content="AssetTrack Enterprise ITAM" />
+    <meta property="og:title" content="AssetTrack | Enterprise IT Asset & Hardware Inventory Platform" />
+    <meta property="og:description" content="Granular hardware modeling (CPU, multi-module DDR4/5, NVMe/SATA drives), opaque QR labels, immutable chain of custody, and auditable spare parts stock ledger." />
+    <meta property="og:image" content="/favicon.svg" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://assettrack.enterprise/" />
+    <meta name="twitter:title" content="AssetTrack | Enterprise IT Asset & Hardware Inventory Platform" />
+    <meta name="twitter:description" content="Granular hardware specifications, QR code labels, employee handovers, and spare parts catalog." />
+    <meta name="twitter:image" content="/favicon.svg" />
+
+    <!-- Preconnect & Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Global Structured Data / Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "AssetTrack Enterprise ITAM",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web, Windows, macOS, Linux, iOS, Android",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "description": "Enterprise IT Asset and Inventory Management System with hardware specs modeling, QR token tracking, and spare parts catalog."
+          },
+          {
+            "@type": "Organization",
+            "name": "AssetTrack ITAM Solutions",
+            "url": "https://assettrack.enterprise/",
+            "logo": "https://assettrack.enterprise/favicon.svg",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+1-800-555-ITAM",
+              "contactType": "customer service"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased font-sans transition-colors duration-200">
     <div id="root"></div>

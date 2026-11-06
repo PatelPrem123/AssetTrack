@@ -13,6 +13,7 @@ import {
   Users,
   ShieldCheck,
   LogIn,
+  ShoppingBag,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
@@ -42,6 +43,7 @@ export function Sidebar() {
 
   const navigation = [
     { name: 'Dashboard', to: '/', icon: LayoutDashboard, end: true },
+    { name: 'Hardware Catalog', to: '/catalog', icon: ShoppingBag, end: true },
     { name: 'Asset Inventory', to: '/assets', icon: Laptop, end: true },
     { name: 'Custody & Handovers', to: '/assignments', icon: Users, end: true },
     { name: 'Register Asset', to: '/assets/new', icon: PlusCircle, roles: ['Admin', 'Asset Manager'], end: true },

@@ -3,7 +3,7 @@ import { TaxonomyService } from '../services/taxonomy/taxonomyService.js';
 // Categories
 export async function getCategories(req, res, next) {
   try {
-    const categories = await TaxonomyService.listCategories(req.user.organizationId);
+    const categories = await TaxonomyService.listCategories(req.user?.organizationId);
     res.status(200).json({ success: true, count: categories.length, data: categories });
   } catch (error) {
     next(error);
@@ -22,7 +22,7 @@ export async function createCategory(req, res, next) {
 // Departments
 export async function getDepartments(req, res, next) {
   try {
-    const departments = await TaxonomyService.listDepartments(req.user.organizationId);
+    const departments = await TaxonomyService.listDepartments(req.user?.organizationId);
     res.status(200).json({ success: true, count: departments.length, data: departments });
   } catch (error) {
     next(error);
@@ -41,7 +41,7 @@ export async function createDepartment(req, res, next) {
 // Locations
 export async function getLocations(req, res, next) {
   try {
-    const locations = await TaxonomyService.listLocations(req.user.organizationId);
+    const locations = await TaxonomyService.listLocations(req.user?.organizationId);
     res.status(200).json({ success: true, count: locations.length, data: locations });
   } catch (error) {
     next(error);

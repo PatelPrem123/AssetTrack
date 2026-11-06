@@ -96,18 +96,50 @@ export function AssetRegisterPage() {
     },
   });
 
+  // Client-side defaults in case data is loading or network is offline
+  const fallbackCategories = [
+    { _id: 'cat-lap', name: 'Laptops', code: 'LAP' },
+    { _id: 'cat-dsk', name: 'Desktop Computers', code: 'DSK' },
+    { _id: 'cat-wrk', name: 'Workstations', code: 'WRK' },
+    { _id: 'cat-mon', name: 'Monitors', code: 'MON' },
+    { _id: 'cat-net', name: 'Network Switches & Routers', code: 'NET' },
+    { _id: 'cat-str', name: 'Storage Devices', code: 'STR' },
+  ];
+
+  const fallbackDepartments = [
+    { _id: 'dept-it', name: 'IT & Infrastructure', code: 'IT' },
+    { _id: 'dept-eng', name: 'Engineering & Development', code: 'ENG' },
+    { _id: 'dept-prod', name: 'Product & Design', code: 'PROD' },
+    { _id: 'dept-ops', name: 'Operations & Facilities', code: 'OPS' },
+    { _id: 'dept-hr', name: 'Human Resources', code: 'HR' },
+  ];
+
+  const fallbackLocations = [
+    { _id: 'loc-srv', building: 'HQ Main', room: 'Server Room 101' },
+    { _id: 'loc-bay', building: 'HQ Main', room: 'IT Diagnostics Bay' },
+    { _id: 'loc-eng', building: 'Tech Hub', room: 'Engineering Floor 402' },
+    { _id: 'loc-rem', building: 'Remote Depot', room: 'Dispatched to Employee' },
+  ];
+
+  const activeCategories = (categories && categories.length > 0) ? categories : fallbackCategories;
+  const activeDepartments = (departments && departments.length > 0) ? departments : fallbackDepartments;
+  const activeLocations = (locations && locations.length > 0) ? locations : fallbackLocations;
+
   // Automatically select the first option when data loads
   useEffect(() => {
-    if (categories?.length && !formData.categoryId) {
-      setFormData((prev) => ({ ...prev, categoryId: categories[0]._id }));
+    if (activeCategories.length && !formData.categoryId) {
+      const firstId = activeCategories[0]._id || activeCategories[0].id;
+      setFormData((prev) => ({ ...prev, categoryId: firstId }));
     }
-    if (departments?.length && !formData.departmentId) {
-      setFormData((prev) => ({ ...prev, departmentId: departments[0]._id }));
+    if (activeDepartments.length && !formData.departmentId) {
+      const firstId = activeDepartments[0]._id || activeDepartments[0].id;
+      setFormData((prev) => ({ ...prev, departmentId: firstId }));
     }
-    if (locations?.length && !formData.locationId) {
-      setFormData((prev) => ({ ...prev, locationId: locations[0]._id }));
+    if (activeLocations.length && !formData.locationId) {
+      const firstId = activeLocations[0]._id || activeLocations[0].id;
+      setFormData((prev) => ({ ...prev, locationId: firstId }));
     }
-  }, [categories, departments, locations]);
+  }, [activeCategories, activeDepartments, activeLocations, formData.categoryId, formData.departmentId, formData.locationId]);
 
   const registerMutation = useMutation({
     mutationFn: async (payload) => {
@@ -166,12 +198,12 @@ export function AssetRegisterPage() {
 
     const payload = {
       name: formData.name,
-      categoryId: formData.categoryId || (categories && categories[0]?._id),
+      categoryId: formData.categoryId || (activeCategories[0]?._id || activeCategories[0]?.id),
       manufacturer: formData.manufacturer,
       model: formData.model,
       serialNumber: formData.serialNumber,
-      departmentId: formData.departmentId || (departments && departments[0]?._id),
-      locationId: formData.locationId || (locations && locations[0]?._id),
+      departmentId: formData.departmentId || (activeDepartments[0]?._id || activeDepartments[0]?.id),
+      locationId: formData.locationId || (activeLocations[0]?._id || activeLocations[0]?.id),
       purchaseCostMinor,
       warrantyExpiry: formData.warrantyExpiry ? new Date(formData.warrantyExpiry) : undefined,
       specifications: {
@@ -278,15 +310,14 @@ export function AssetRegisterPage() {
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                 className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-white"
               >
-                {!categories || categories.length === 0 ? (
-                  <option value="">{isLoadingCats ? 'Loading categories...' : 'No categories found (Please sign in)'}</option>
-                ) : (
-                  categories.map((cat) => (
-                    <option key={cat._id} value={cat._id}>
+                {activeCategories.map((cat) => {
+                  const catId = cat._id || cat.id;
+                  return (
+                    <option key={catId} value={catId}>
                       {cat.name} ({cat.code})
                     </option>
-                  ))
-                )}
+                  );
+                })}
               </select>
             </div>
           </div>
@@ -343,15 +374,14 @@ export function AssetRegisterPage() {
                 onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
                 className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-white"
               >
-                {!departments || departments.length === 0 ? (
-                  <option value="">{isLoadingDepts ? 'Loading departments...' : 'No departments found'}</option>
-                ) : (
-                  departments.map((dept) => (
-                    <option key={dept._id} value={dept._id}>
+                {activeDepartments.map((dept) => {
+                  const deptId = dept._id || dept.id;
+                  return (
+                    <option key={deptId} value={deptId}>
                       {dept.name} ({dept.code})
                     </option>
-                  ))
-                )}
+                  );
+                })}
               </select>
             </div>
             <div>
@@ -363,15 +393,14 @@ export function AssetRegisterPage() {
                 onChange={(e) => setFormData({ ...formData, locationId: e.target.value })}
                 className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-white"
               >
-                {!locations || locations.length === 0 ? (
-                  <option value="">{isLoadingLocs ? 'Loading locations...' : 'No locations found'}</option>
-                ) : (
-                  locations.map((loc) => (
-                    <option key={loc._id} value={loc._id}>
-                      {loc.building} - {loc.room}
+                {activeLocations.map((loc) => {
+                  const locId = loc._id || loc.id;
+                  return (
+                    <option key={locId} value={locId}>
+                      {loc.building || 'HQ'} - {loc.room || 'Main Room'}
                     </option>
-                  ))
-                )}
+                  );
+                })}
               </select>
             </div>
             <div>
