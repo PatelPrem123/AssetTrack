@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -12,13 +12,34 @@ import {
   Trash2,
   CheckCircle2,
   AlertCircle,
+  LogIn,
 } from 'lucide-react';
 import { api } from '../services/api';
+import { useAuthStore } from '../store/authStore';
 
 export function AssetRegisterPage() {
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStore();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [quickLoginLoading, setQuickLoginLoading] = useState(false);
+
+  const handleQuickAdminLogin = async () => {
+    setQuickLoginLoading(true);
+    try {
+      const res = await api.post('/auth/login', {
+        email: 'admin@testitcorp.com',
+        password: 'AdminPassword123!',
+      });
+      const { user: loggedInUser, token, organization } = res.data.data;
+      setUser(loggedInUser, token, organization);
+      window.location.reload();
+    } catch (err) {
+      setError('Quick login failed: ' + err.message);
+    } finally {
+      setQuickLoginLoading(false);
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -51,7 +72,7 @@ export function AssetRegisterPage() {
     },
   });
 
-  const { data: categories } = useQuery({
+  const { data: categories, isLoading: isLoadingCats } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await api.get('/categories');
@@ -59,7 +80,7 @@ export function AssetRegisterPage() {
     },
   });
 
-  const { data: departments } = useQuery({
+  const { data: departments, isLoading: isLoadingDepts } = useQuery({
     queryKey: ['departments'],
     queryFn: async () => {
       const res = await api.get('/departments');
@@ -67,13 +88,26 @@ export function AssetRegisterPage() {
     },
   });
 
-  const { data: locations } = useQuery({
+  const { data: locations, isLoading: isLoadingLocs } = useQuery({
     queryKey: ['locations'],
     queryFn: async () => {
       const res = await api.get('/locations');
       return res.data.data;
     },
   });
+
+  // Automatically select the first option when data loads
+  useEffect(() => {
+    if (categories?.length && !formData.categoryId) {
+      setFormData((prev) => ({ ...prev, categoryId: categories[0]._id }));
+    }
+    if (departments?.length && !formData.departmentId) {
+      setFormData((prev) => ({ ...prev, departmentId: departments[0]._id }));
+    }
+    if (locations?.length && !formData.locationId) {
+      setFormData((prev) => ({ ...prev, locationId: locations[0]._id }));
+    }
+  }, [categories, departments, locations]);
 
   const registerMutation = useMutation({
     mutationFn: async (payload) => {
@@ -175,6 +209,30 @@ export function AssetRegisterPage() {
         </div>
       </div>
 
+      {/* Guest Mode Warning Banner */}
+      {!user && (
+        <div className="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-800 dark:text-amber-300 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <div>
+              <p className="font-semibold text-slate-900 dark:text-white">Active Session Required</p>
+              <p className="text-slate-600 dark:text-slate-400">
+                You are currently in guest mode. Sign in to populate taxonomy categories, departments, and register hardware assets.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleQuickAdminLogin}
+            disabled={quickLoginLoading}
+            className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg shadow-sm whitespace-nowrap transition flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>{quickLoginLoading ? 'Signing In...' : '1-Click Admin Login'}</span>
+          </button>
+        </div>
+      )}
+
       {error && (
         <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs rounded-xl flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
@@ -220,11 +278,15 @@ export function AssetRegisterPage() {
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                 className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-white"
               >
-                {categories?.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.name} ({cat.code})
-                  </option>
-                ))}
+                {!categories || categories.length === 0 ? (
+                  <option value="">{isLoadingCats ? 'Loading categories...' : 'No categories found (Please sign in)'}</option>
+                ) : (
+                  categories.map((cat) => (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name} ({cat.code})
+                    </option>
+                  ))
+                )}
               </select>
             </div>
           </div>
@@ -281,11 +343,15 @@ export function AssetRegisterPage() {
                 onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
                 className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-white"
               >
-                {departments?.map((dept) => (
-                  <option key={dept._id} value={dept._id}>
-                    {dept.name} ({dept.code})
-                  </option>
-                ))}
+                {!departments || departments.length === 0 ? (
+                  <option value="">{isLoadingDepts ? 'Loading departments...' : 'No departments found'}</option>
+                ) : (
+                  departments.map((dept) => (
+                    <option key={dept._id} value={dept._id}>
+                      {dept.name} ({dept.code})
+                    </option>
+                  ))
+                )}
               </select>
             </div>
             <div>
@@ -297,11 +363,15 @@ export function AssetRegisterPage() {
                 onChange={(e) => setFormData({ ...formData, locationId: e.target.value })}
                 className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-900 dark:text-white"
               >
-                {locations?.map((loc) => (
-                  <option key={loc._id} value={loc._id}>
-                    {loc.building} - {loc.room}
-                  </option>
-                ))}
+                {!locations || locations.length === 0 ? (
+                  <option value="">{isLoadingLocs ? 'Loading locations...' : 'No locations found'}</option>
+                ) : (
+                  locations.map((loc) => (
+                    <option key={loc._id} value={loc._id}>
+                      {loc.building} - {loc.room}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
             <div>

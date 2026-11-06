@@ -12,16 +12,35 @@ import {
   CheckSquare,
   Square,
   CornerDownLeft,
+  LogIn,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 
 export function AssignmentsPage() {
   const queryClient = useQueryClient();
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [returnAssignment, setReturnAssignment] = useState(null);
   const [activeTab, setActiveTab] = useState('active'); // 'active' or 'history'
+  const [quickLoginLoading, setQuickLoginLoading] = useState(false);
+
+  const handleQuickAdminLogin = async () => {
+    setQuickLoginLoading(true);
+    try {
+      const res = await api.post('/auth/login', {
+        email: 'admin@testitcorp.com',
+        password: 'AdminPassword123!',
+      });
+      const { user: loggedInUser, token, organization: org } = res.data.data;
+      setUser(loggedInUser, token, org);
+      window.location.reload();
+    } catch (err) {
+      console.error('Quick login failed:', err);
+    } finally {
+      setQuickLoginLoading(false);
+    }
+  };
 
   // New Handover Form State
   const [checkoutData, setCheckoutData] = useState({
@@ -155,6 +174,30 @@ export function AssignmentsPage() {
           </button>
         )}
       </div>
+
+      {/* Guest Mode Warning Banner */}
+      {!user && (
+        <div className="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-800 dark:text-amber-300 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <div>
+              <p className="font-semibold text-slate-900 dark:text-white">Active Session Required</p>
+              <p className="text-slate-600 dark:text-slate-400">
+                You are currently in guest mode. Sign in to view active employee assignments, custody handovers, and return history.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleQuickAdminLogin}
+            disabled={quickLoginLoading}
+            className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg shadow-sm whitespace-nowrap transition flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>{quickLoginLoading ? 'Signing In...' : '1-Click Admin Login'}</span>
+          </button>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2 border-b border-slate-200 dark:border-slate-800 text-xs font-semibold">

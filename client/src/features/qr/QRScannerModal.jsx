@@ -21,8 +21,36 @@ export function QRScannerModal({ isOpen, onClose, onSelectAsset }) {
     }
 
     // Initialize scanner with slight delay to ensure DOM is ready
+    let observer = null;
     const timer = setTimeout(() => {
       try {
+        const container = document.getElementById('qr-reader-container');
+        if (container) {
+          observer = new MutationObserver(() => {
+            const headerMsg = document.getElementById('qr-reader-container__header_message');
+            if (headerMsg && headerMsg.innerText) {
+              const text = headerMsg.innerText;
+              if (
+                text.includes('NotFoundException') ||
+                text.includes('No MultiFormat Readers') ||
+                text.includes('No barcode or QR code')
+              ) {
+                headerMsg.innerText =
+                  'No valid QR code detected in the selected image. Please upload an image with a clear Asset QR code, or enter the tag manually below.';
+                headerMsg.style.fontSize = '12px';
+                headerMsg.style.padding = '8px 12px';
+                headerMsg.style.borderRadius = '8px';
+                headerMsg.style.border = '1px solid #fecdd3';
+                headerMsg.style.background = '#fff1f2';
+                headerMsg.style.color = '#e11d48';
+                headerMsg.style.textAlign = 'center';
+                headerMsg.style.margin = '8px 0';
+              }
+            }
+          });
+          observer.observe(container, { childList: true, subtree: true, characterData: true });
+        }
+
         const scanner = new Html5QrcodeScanner(
           'qr-reader-container',
           {
@@ -57,6 +85,9 @@ export function QRScannerModal({ isOpen, onClose, onSelectAsset }) {
 
     return () => {
       clearTimeout(timer);
+      if (observer) {
+        observer.disconnect();
+      }
       if (scannerRef.current) {
         try {
           scannerRef.current.clear();
